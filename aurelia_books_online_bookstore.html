@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurelia Books — Curated Online Bookstore</title>
+  <!-- Google Fonts for Editorial Serif & Clean Sans-Serif Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       1. CSS DESIGN TOKENS & RESET (PURE CSS — NO JAVASCRIPT)
+       ========================================================================== */
+    :root {
+      --bg-primary: #faf7f2;
+      --bg-secondary: #f2ece1;
+      --bg-card: #ffffff;
+      --bg-dark: #18221e;
+      --bg-dark-soft: #22302a;
+      --text-primary: #1c2421;
+      --text-secondary: #53605b;
+      --text-light: #f7f4ee;
+      --accent-primary: #c25934;
+      --accent-hover: #a64624;
+      --accent-gold: #d49b35;
+      --accent-sage: #2e5a44;
+      --accent-sage-light: #e4ede8;
+      --border-color: #e3dcd0;
+      --shadow-sm: 0 4px 12px rgba(24, 34, 30, 0.05);
+      --shadow-md: 0 12px 28px rgba(24, 34, 30, 0.09);
+      --shadow-lg: 0 20px 45px rgba(24, 34, 30, 0.14);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    .section {
+      padding: 4.5rem 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 3rem;
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-primary);
+      background: rgba(194, 89, 52, 0.1);
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.85rem, 3.5vw, 2.65rem);
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.6rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(194, 89, 52, 0.28);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border-color: var(--text-primary);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--text-primary);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background-color: #ffffff;
+      color: var(--bg-dark);
+    }
+
+    .btn-light:hover {
+      background-color: var(--bg-secondary);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       2. TOP ANNOUNCEMENT BAR & STICKY NAVIGATION (PURE CSS MOBILE TOGGLE)
+       ========================================================================== */
+    .promo-bar {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      text-align: center;
+      font-size: 0.84rem;
+      padding: 0.6rem 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .promo-bar strong {
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(250, 247, 242, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.85rem;
+    }
+
+    .nav-links a {
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      position: relative;
+      padding: 0.25rem 0;
+      transition: var(--transition);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-primary);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      padding: 0.42rem 0.9rem;
+      gap: 0.45rem;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.86rem;
+      width: 150px;
+      color: var(--text-primary);
+    }
+
+    .cart-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--bg-dark);
+      color: #ffffff;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .cart-link:hover {
+      background-color: var(--accent-primary);
+    }
+
+    .cart-badge {
+      background-color: var(--accent-gold);
+      color: var(--bg-dark);
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 0.1rem 0.48rem;
+      border-radius: 999px;
+    }
+
+    /* Pure CSS Mobile Hamburger Menu */
+    #nav-toggle {
+      display: none;
+    }
+
+    .hamburger-btn {
+      display: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+    }
+
+    /* ==========================================================================
+       3. HERO SECTION
+       ========================================================================== */
+    .hero {
+      padding: 4rem 0 4.5rem;
+      background: radial-gradient(circle at top right, #efe6d5 0%, var(--bg-primary) 58%);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background-color: var(--accent-sage-light);
+      color: var(--accent-sage);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.4rem 0.95rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.35rem, 4.8vw, 3.65rem);
+      line-height: 1.12;
+      color: var(--text-primary);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-title span {
+      color: var(--accent-primary);
+      font-style: italic;
+    }
+
+    .hero-desc {
+      font-size: 1.08rem;
+      color: var(--text-secondary);
+      max-width: 540px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.25rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .stat-item strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      color: var(--text-primary);
+    }
+
+    .stat-item span {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    /* Hero 3D Book Showcase */
+    .hero-showcase {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .showcase-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      max-width: 390px;
+      width: 100%;
+      position: relative;
+    }
+
+    .showcase-tag {
+      position: absolute;
+      top: -14px;
+      right: 22px;
+      background: var(--accent-gold);
+      color: var(--bg-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero-book-art {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      box-shadow: -10px 12px 24px rgba(24, 34, 30, 0.18);
+      transition: var(--transition);
+    }
+
+    .showcase-card:hover .hero-book-art {
+      transform: translateY(-6px) rotate(-1deg);
+    }
+
+    .showcase-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.75rem;
+    }
+
+    /* ==========================================================================
+       4. BOOK CATEGORIES OVERVIEW
+       ========================================================================== */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .category-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .cat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: var(--bg-secondary);
+      color: var(--accent-primary);
+      display: grid;
+      place-items: center;
+      transition: var(--transition);
+    }
+
+    .category-card:hover .cat-icon {
+      background-color: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    .category-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--text-primary);
+    }
+
+    .category-card span {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       5. FEATURED BOOKS WITH PURE CSS INTERACTIVE CATEGORY FILTERING
+       ========================================================================== */
+    .featured-section {
+      background-color: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Hide Radio Inputs for Pure CSS Tabs */
+    .filter-radio {
+      display: none;
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-bottom: 2.75rem;
+    }
+
+    .filter-label {
+      cursor: pointer;
+      padding: 0.6rem 1.25rem;
+      border-radius: 999px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .filter-label:hover {
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
+    }
+
+    /* Active Tab Styling via :checked */
+    #cat-all:checked ~ .filter-tabs label[for="cat-all"],
+    #cat-fiction:checked ~ .filter-tabs label[for="cat-fiction"],
+    #cat-scifi:checked ~ .filter-tabs label[for="cat-scifi"],
+    #cat-growth:checked ~ .filter-tabs label[for="cat-growth"],
+    #cat-mystery:checked ~ .filter-tabs label[for="cat-mystery"] {
+      background-color: var(--bg-dark);
+      color: #ffffff;
+      border-color: var(--bg-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Pure CSS Filtering Logic */
+    #cat-fiction:checked ~ .books-grid .book-card:not([data-category="fiction"]),
+    #cat-scifi:checked ~ .books-grid .book-card:not([data-category="scifi"]),
+    #cat-growth:checked ~ .books-grid .book-card:not([data-category="growth"]),
+    #cat-mystery:checked ~ .books-grid .book-card:not([data-category="mystery"]) {
+      display: none;
+    }
+
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .book-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .book-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .book-cover-wrap {
+      position: relative;
+      background: linear-gradient(145deg, #f6f1e7, #ebe3d3);
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .book-cover-svg {
+      width: 155px;
+      height: 220px;
+      border-radius: 4px 10px 10px 4px;
+      box-shadow: -6px 10px 20px rgba(0, 0, 0, 0.22);
+      transition: var(--transition);
+    }
+
+    .book-card:hover .book-cover-svg {
+      transform: scale(1.04) translateY(-3px);
+    }
+
+    .discount-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .discount-badge.bestseller {
+      background-color: var(--accent-sage);
+    }
+
+    /* Pure CSS Wishlist Heart Toggle */
+    .wish-checkbox {
+      display: none;
+    }
+
+    .wish-label {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--border-color);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: #9aa39f;
+      font-size: 1.05rem;
+      transition: var(--transition);
+    }
+
+    .wish-checkbox:checked + .wish-label {
+      color: #d9383a;
+      border-color: #f4c2c2;
+      background: #fff5f5;
+      transform: scale(1.1);
+    }
+
+    .book-body {
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .book-genre {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-sage);
+      margin-bottom: 0.3rem;
+    }
+
+    .book-title {
+      font-family: var(--font-serif);
+      font-size: 1.22rem;
+      line-height: 1.3;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .book-author {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.65rem;
+    }
+
+    .book-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.84rem;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+    }
+
+    .book-rating span {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+
+    .book-footer {
+      margin-top: auto;
+      padding-top: 0.95rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .price-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-current {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .price-old {
+      font-size: 0.8rem;
+      color: #8c9692;
+      text-decoration: line-through;
+    }
+
+    /* Pure CSS Interactive "Add to Bag" Toggle */
+    .add-bag-check {
+      display: none;
+    }
+
+    .add-bag-btn {
+      cursor: pointer;
+      background-color: var(--bg-dark);
+      color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 0.58rem 0.95rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      user-select: none;
+      text-align: center;
+    }
+
+    .add-bag-btn:hover {
+      background-color: var(--accent-primary);
+    }
+
+    .add-bag-btn .added-text {
+      display: none;
+    }
+
+    .add-bag-check:checked + .add-bag-btn {
+      background-color: var(--accent-sage);
+      color: #ffffff;
+    }
+
+    .add-bag-check:checked + .add-bag-btn .default-text {
+      display: none;
+    }
+
+    .add-bag-check:checked + .add-bag-btn .added-text {
+      display: inline;
+    }
+
+    /* ==========================================================================
+       6. SPECIAL OFFERS & BUNDLE DEALS
+       ========================================================================== */
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .offer-card {
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .offer-card.dark {
+      background: linear-gradient(135deg, var(--bg-dark) 0%, #2a3c34 100%);
+      color: var(--text-light);
+    }
+
+    .offer-card.terracotta {
+      background: linear-gradient(135deg, #c25934 0%, #9b3e1e 100%);
+      color: #ffffff;
+    }
+
+    .offer-card.cream {
+      background: linear-gradient(135deg, #efe7d6 0%, #e4d8c0 100%);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .offer-pill {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .offer-card.cream .offer-pill {
+      background: rgba(24, 34, 30, 0.1);
+    }
+
+    .offer-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.65rem;
+      line-height: 1.25;
+      margin: 0.65rem 0;
+    }
+
+    .offer-card p {
+      font-size: 0.94rem;
+      opacity: 0.9;
+    }
+
+    .coupon-code {
+      display: inline-block;
+      margin-top: 0.85rem;
+      padding: 0.45rem 0.95rem;
+      border: 1.5px dashed currentColor;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    /* ==========================================================================
+       7. FEATURED AUTHORS SECTION
+       ========================================================================== */
+    .authors-section {
+      background-color: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .authors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .author-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.85rem 1.5rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .author-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .author-avatar {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      margin: 0 auto 1.1rem;
+      border: 3px solid var(--accent-primary);
+      padding: 3px;
+      background: #ffffff;
+    }
+
+    .author-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .author-role {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    .author-bio {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.1rem;
+    }
+
+    .author-books-count {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--bg-secondary);
+      padding: 0.32rem 0.8rem;
+      border-radius: 999px;
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       8. SHOPPING SECTION & ORDER CHECKOUT (PURE CSS INTERACTIVE UI)
+       ========================================================================== */
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 1.45fr 0.95fr;
+      gap: 2.25rem;
+      align-items: start;
+    }
+
+    .cart-panel, .summary-panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.85rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-heading {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cart-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .cart-item-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mini-cover {
+      width: 54px;
+      height: 76px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cart-item-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .cart-item-meta {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+    }
+
+    .qty-select {
+      padding: 0.4rem 0.65rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-primary);
+      font-family: inherit;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .cart-item-price {
+      font-weight: 700;
+      font-size: 1.05rem;
+      min-width: 68px;
+      text-align: right;
+    }
+
+    .shipping-progress {
+      background-color: var(--accent-sage-light);
+      color: var(--accent-sage);
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Order Summary Form */
+    .promo-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .promo-form input {
+      flex: 1;
+      padding: 0.68rem 0.9rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.94rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .summary-row.discount {
+      color: var(--accent-sage);
+      font-weight: 600;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      padding-top: 1rem;
+      margin-top: 0.75rem;
+      border-top: 2px solid var(--border-color);
+      margin-bottom: 1.35rem;
+    }
+
+    .checkout-fields {
+      display: grid;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .checkout-fields input, .checkout-fields select {
+      width: 100%;
+      padding: 0.72rem 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      background-color: var(--bg-primary);
+    }
+
+    .full-width-btn {
+      width: 100%;
+    }
+
+    /* Pure CSS Order Confirmation Modal using :target */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(24, 34, 30, 0.72);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+      z-index: 999;
+    }
+
+    .modal-overlay:target {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      max-width: 440px;
+      width: 100%;
+      padding: 2.25rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(15px);
+      transition: var(--transition);
+    }
+
+    .modal-overlay:target .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-check {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--accent-sage-light);
+      color: var(--accent-sage);
+      display: grid;
+      place-items: center;
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 0 auto 1.15rem;
+    }
+
+    /* ==========================================================================
+       9. FOOTER
+       ========================================================================== */
+    .footer {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      padding: 4rem 0 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      gap: 2.5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .footer h4 {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      margin-bottom: 1.1rem;
+      color: #ffffff;
+    }
+
+    .footer p, .footer li a {
+      font-size: 0.9rem;
+      color: #b8c2be;
+      transition: var(--transition);
+    }
+
+    .footer li {
+      margin-bottom: 0.6rem;
+    }
+
+    .footer li a:hover {
+      color: var(--accent-gold);
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 0.7rem 0.9rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      font-family: inherit;
+    }
+
+    .footer-bottom {
+      padding-top: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.84rem;
+      color: #9aa7a2;
+    }
+
+    /* ==========================================================================
+       10. RESPONSIVE MEDIA QUERIES (MOBILE, TABLET, DESKTOP)
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-desc {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-cta-group, .hero-stats {
+        justify-content: center;
+      }
+
+      .shop-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .search-box {
+        display: none;
+      }
+
+      .hamburger-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 76px;
+        left: 0;
+        right: 0;
+        background-color: var(--bg-card);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem 1.5rem;
+        gap: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        display: none;
+      }
+
+      #nav-toggle:checked ~ .nav-links {
+        display: flex;
+      }
+
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .cart-item-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Promotional Strip -->
+  <div class="promo-bar">
+    Autumn Reading Festival: Enjoy <strong>25% OFF</strong> on orders above ₹999 with code <strong>READ25</strong> &bull; Free Express Delivery!
+  </div>
+
+  <!-- Sticky Responsive Navigation Header -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </span>
+        Aurelia Books
+      </a>
+
+      <!-- Pure CSS Mobile Menu Toggle -->
+      <input type="checkbox" id="nav-toggle" aria-label="Toggle Navigation" />
+      <label for="nav-toggle" class="hamburger-btn" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </label>
+
+      <nav class="nav-links">
+        <a href="#categories">Categories</a>
+        <a href="#featured">Featured Books</a>
+        <a href="#offers">Special Offers</a>
+        <a href="#authors">Authors</a>
+        <a href="#shop">Shopping Bag</a>
+      </nav>
+
+      <div class="nav-actions">
+        <form class="search-box" action="#featured">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#53605b" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="search" placeholder="Search titles, authors..." aria-label="Search books" />
+        </form>
+        <a href="#shop" class="cart-link">
+          <span>Bag</span>
+          <span class="cart-badge">3</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="hero-badge">Curated Independent Bookstore &bull; Est. 2026</span>
+        <h1 class="hero-title">Stories That Stay With You <span>Long After</span> the Last Page</h1>
+        <p class="hero-desc">
+          Explore handpicked literary fiction, mind-expanding science, timeless classics, and exclusive signed hardcover editions delivered straight to your reading nook.
+        </p>
+        <div class="hero-cta-group">
+          <a href="#featured" class="btn btn-primary">Explore Featured Books</a>
+          <a href="#offers" class="btn btn-outline">View Seasonal Offers</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <strong>14,500+</strong>
+            <span>Curated Titles</span>
+          </div>
+          <div class="stat-item">
+            <strong>4.9 ★</strong>
+            <span>Reader Satisfaction</span>
+          </div>
+          <div class="stat-item">
+            <strong>Free Shipping</strong>
+            <span>On Orders Over ₹499</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Book of the Month Showcase Card -->
+      <div class="hero-showcase">
+        <div class="showcase-card">
+          <span class="showcase-tag">Book of the Month &bull; 30% OFF</span>
+          <div class="hero-book-art">
+            <svg viewBox="0 0 340 230" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#1b3a34" />
+                  <stop offset="100%" stop-color="#0f221e" />
+                </linearGradient>
+              </defs>
+              <rect width="340" height="230" fill="url(#heroGrad)" />
+              <circle cx="265" cy="65" r="42" fill="#d49b35" opacity="0.88" />
+              <path d="M0 175 Q110 130 210 170 T340 155 L340 230 L0 230 Z" fill="#c25934" opacity="0.85" />
+              <text x="26" y="54" fill="#d49b35" font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="2">COLLECTOR'S EDITION</text>
+              <text x="26" y="92" fill="#ffffff" font-family="Playfair Display, Georgia, serif" font-size="25" font-weight="700">The Glass</text>
+              <text x="26" y="122" fill="#ffffff" font-family="Playfair Display, Georgia, serif" font-size="25" font-weight="700">Observatory</text>
+              <text x="26" y="150" fill="#d8e2de" font-family="Inter, sans-serif" font-size="13">By Clara Vance</text>
+            </svg>
+          </div>
+          <h2 style="font-family: var(--font-serif); font-size: 1.3rem;">The Glass Observatory</h2>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">A luminous tale of memory, stargazing, and forgotten coastal libraries.</p>
+          <div class="showcase-meta">
+            <div>
+              <strong style="font-size: 1.25rem; color: var(--accent-primary);">₹489</strong>
+              <span style="font-size: 0.85rem; text-decoration: line-through; color: #8c9692; margin-left: 6px;">₹699</span>
+            </div>
+            <a href="#shop" class="btn btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.85rem;">Buy Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Book Categories Section -->
+  <section id="categories" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Browse by Genre</span>
+        <h2 class="section-title">Curated Book Categories</h2>
+        <p class="section-subtitle">Find your next great read across our thoughtfully organized shelves.</p>
+      </div>
+
+      <div class="categories-grid">
+        <a href="#featured" class="category-card">
+          <div class="cat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <h3>Literary Fiction</h3>
+          <span>3,420 Books</span>
+        </a>
+
+        <a href="#featured" class="category-card">
+          <div class="cat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <h3>Sci-Fi &amp; Fantasy</h3>
+          <span>2,180 Books</span>
+        </a>
+
+        <a href="#featured" class="category-card">
+          <div class="cat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+          </div>
+          <h3>Self-Growth</h3>
+          <span>1,890 Books</span>
+        </a>
+
+        <a href="#featured" class="category-card">
+          <div class="cat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <h3>Mystery &amp; Thriller</h3>
+          <span>2,640 Books</span>
+        </a>
+
+        <a href="#featured" class="category-card">
+          <div class="cat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V7l8-4v18"></path>
+              <path d="M19 21V11l-6-4"></path>
+            </svg>
+          </div>
+          <h3>History &amp; Arts</h3>
+          <span>1,510 Books</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Books Section (with Pure CSS Category Filter Tabs) -->
+  <section id="featured" class="section featured-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Editor's Picks</span>
+        <h2 class="section-title">Featured Books &amp; Bestsellers</h2>
+        <p class="section-subtitle">Filter by category below using our instant pure-CSS shelf selector, add books to your bag, or save favorites.</p>
+      </div>
+
+      <!-- Pure CSS Radio Inputs for Category Filtering -->
+      <input type="radio" name="book-filter" id="cat-all" class="filter-radio" checked />
+      <input type="radio" name="book-filter" id="cat-fiction" class="filter-radio" />
+      <input type="radio" name="book-filter" id="cat-scifi" class="filter-radio" />
+      <input type="radio" name="book-filter" id="cat-growth" class="filter-radio" />
+      <input type="radio" name="book-filter" id="cat-mystery" class="filter-radio" />
+
+      <div class="filter-tabs">
+        <label for="cat-all" class="filter-label">All Books (8)</label>
+        <label for="cat-fiction" class="filter-label">Literary Fiction</label>
+        <label for="cat-scifi" class="filter-label">Sci-Fi &amp; Fantasy</label>
+        <label for="cat-growth" class="filter-label">Self-Growth</label>
+        <label for="cat-mystery" class="filter-label">Mystery &amp; Thriller</label>
+      </div>
+
+      <!-- Books Grid -->
+      <div class="books-grid">
+
+        <!-- Book 1 -->
+        <article class="book-card" data-category="fiction">
+          <div class="book-cover-wrap">
+            <span class="discount-badge">25% OFF</span>
+            <input type="checkbox" id="wish-1" class="wish-checkbox" />
+            <label for="wish-1" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#23483c" />
+              <rect x="0" y="0" width="12" height="220" fill="#162e26" />
+              <circle cx="85" cy="95" r="36" fill="#e09f3e" />
+              <path d="M12 165 Q80 130 160 165 L160 220 L12 220 Z" fill="#c25934" />
+              <text x="24" y="42" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">Autumn in</text>
+              <text x="24" y="60" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">Kyoto</text>
+              <text x="24" y="200" fill="#f7f4ee" font-family="sans-serif" font-size="9">HARUKI SATO</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Literary Fiction</span>
+            <h3 class="book-title">Autumn in Kyoto</h3>
+            <p class="book-author">by Haruki Sato</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(412 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹449</span>
+                <span class="price-old">₹599</span>
+              </div>
+              <input type="checkbox" id="bag-1" class="add-bag-check" checked />
+              <label for="bag-1" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 2 -->
+        <article class="book-card" data-category="scifi">
+          <div class="book-cover-wrap">
+            <span class="discount-badge bestseller">Bestseller</span>
+            <input type="checkbox" id="wish-2" class="wish-checkbox" />
+            <label for="wish-2" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#182238" />
+              <rect x="0" y="0" width="12" height="220" fill="#0d1321" />
+              <circle cx="95" cy="110" r="44" fill="none" stroke="#64dfdf" stroke-width="2" />
+              <circle cx="95" cy="110" r="24" fill="#5e60ce" />
+              <text x="24" y="42" fill="#80ffdb" font-family="Georgia, serif" font-size="15" font-weight="bold">Orbital</text>
+              <text x="24" y="60" fill="#80ffdb" font-family="Georgia, serif" font-size="15" font-weight="bold">Echoes</text>
+              <text x="24" y="200" fill="#cbd5e1" font-family="sans-serif" font-size="9">ELENA ROSTOVA</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Sci-Fi &amp; Fantasy</span>
+            <h3 class="book-title">Orbital Echoes</h3>
+            <p class="book-author">by Elena Rostova</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(628 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹520</span>
+                <span class="price-old">₹650</span>
+              </div>
+              <input type="checkbox" id="bag-2" class="add-bag-check" checked />
+              <label for="bag-2" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 3 -->
+        <article class="book-card" data-category="growth">
+          <div class="book-cover-wrap">
+            <span class="discount-badge">20% OFF</span>
+            <input type="checkbox" id="wish-3" class="wish-checkbox" />
+            <label for="wish-3" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#f3e9d2" />
+              <rect x="0" y="0" width="12" height="220" fill="#d6c7a7" />
+              <rect x="44" y="78" width="76" height="76" rx="38" fill="#c25934" />
+              <text x="24" y="42" fill="#1c2421" font-family="Georgia, serif" font-size="15" font-weight="bold">The Quiet</text>
+              <text x="24" y="60" fill="#1c2421" font-family="Georgia, serif" font-size="15" font-weight="bold">Architect</text>
+              <text x="24" y="200" fill="#53605b" font-family="sans-serif" font-size="9">JULIAN MERCER</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Self-Growth</span>
+            <h3 class="book-title">The Quiet Architect</h3>
+            <p class="book-author">by Julian Mercer</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9734; <span>(295 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹399</span>
+                <span class="price-old">₹499</span>
+              </div>
+              <input type="checkbox" id="bag-3" class="add-bag-check" checked />
+              <label for="bag-3" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 4 -->
+        <article class="book-card" data-category="mystery">
+          <div class="book-cover-wrap">
+            <span class="discount-badge">15% OFF</span>
+            <input type="checkbox" id="wish-4" class="wish-checkbox" />
+            <label for="wish-4" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#2b2129" />
+              <rect x="0" y="0" width="12" height="220" fill="#181217" />
+              <polygon points="85,72 125,148 45,148" fill="#d49b35" opacity="0.9" />
+              <text x="24" y="42" fill="#f7f4ee" font-family="Georgia, serif" font-size="15" font-weight="bold">Midnight at</text>
+              <text x="24" y="60" fill="#f7f4ee" font-family="Georgia, serif" font-size="15" font-weight="bold">Bellweather</text>
+              <text x="24" y="200" fill="#d49b35" font-family="sans-serif" font-size="9">ARTHUR PENDLETON</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Mystery &amp; Thriller</span>
+            <h3 class="book-title">Midnight at Bellweather</h3>
+            <p class="book-author">by Arthur Pendleton</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(518 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹465</span>
+                <span class="price-old">₹550</span>
+              </div>
+              <input type="checkbox" id="bag-4" class="add-bag-check" />
+              <label for="bag-4" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 5 -->
+        <article class="book-card" data-category="fiction">
+          <div class="book-cover-wrap">
+            <span class="discount-badge bestseller">Staff Pick</span>
+            <input type="checkbox" id="wish-5" class="wish-checkbox" />
+            <label for="wish-5" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#8c3b2b" />
+              <rect x="0" y="0" width="12" height="220" fill="#5e251a" />
+              <circle cx="85" cy="115" r="35" fill="#f4d58d" />
+              <text x="24" y="42" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">Letters to</text>
+              <text x="24" y="60" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">the Sea</text>
+              <text x="24" y="200" fill="#f4d58d" font-family="sans-serif" font-size="9">CLARA VANCE</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Literary Fiction</span>
+            <h3 class="book-title">Letters to the Sea</h3>
+            <p class="book-author">by Clara Vance</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(340 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹410</span>
+                <span class="price-old">₹520</span>
+              </div>
+              <input type="checkbox" id="bag-5" class="add-bag-check" />
+              <label for="bag-5" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 6 -->
+        <article class="book-card" data-category="scifi">
+          <div class="book-cover-wrap">
+            <span class="discount-badge">30% OFF</span>
+            <input type="checkbox" id="wish-6" class="wish-checkbox" />
+            <label for="wish-6" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#1e3f5a" />
+              <rect x="0" y="0" width="12" height="220" fill="#122738" />
+              <rect x="48" y="80" width="70" height="70" transform="rotate(45 83 115)" fill="#e76f51" />
+              <text x="24" y="42" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">Chronicles</text>
+              <text x="24" y="60" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">of Aethel</text>
+              <text x="24" y="200" fill="#a8dadc" font-family="sans-serif" font-size="9">MARCUS THORNE</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Sci-Fi &amp; Fantasy</span>
+            <h3 class="book-title">Chronicles of Aethel</h3>
+            <p class="book-author">by Marcus Thorne</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9734; <span>(198 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹490</span>
+                <span class="price-old">₹700</span>
+              </div>
+              <input type="checkbox" id="bag-6" class="add-bag-check" />
+              <label for="bag-6" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 7 -->
+        <article class="book-card" data-category="growth">
+          <div class="book-cover-wrap">
+            <span class="discount-badge bestseller">Top Rated</span>
+            <input type="checkbox" id="wish-7" class="wish-checkbox" />
+            <label for="wish-7" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#2e5a44" />
+              <rect x="0" y="0" width="12" height="220" fill="#1d3b2c" />
+              <circle cx="85" cy="115" r="32" fill="#e9c46a" />
+              <text x="24" y="42" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">Deep Focus</text>
+              <text x="24" y="60" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">Habits</text>
+              <text x="24" y="200" fill="#e9c46a" font-family="sans-serif" font-size="9">DR. ANANYA RAO</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Self-Growth</span>
+            <h3 class="book-title">Deep Focus Habits</h3>
+            <p class="book-author">by Dr. Ananya Rao</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(784 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹349</span>
+                <span class="price-old">₹450</span>
+              </div>
+              <input type="checkbox" id="bag-7" class="add-bag-check" />
+              <label for="bag-7" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Book 8 -->
+        <article class="book-card" data-category="mystery">
+          <div class="book-cover-wrap">
+            <span class="discount-badge">22% OFF</span>
+            <input type="checkbox" id="wish-8" class="wish-checkbox" />
+            <label for="wish-8" class="wish-label" title="Save to Wishlist">&#9829;</label>
+            <svg class="book-cover-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="160" height="220" fill="#3d3447" />
+              <rect x="0" y="0" width="12" height="220" fill="#251f2b" />
+              <circle cx="85" cy="112" r="36" stroke="#f4a261" stroke-width="4" fill="none" />
+              <text x="24" y="42" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">The Cipher</text>
+              <text x="24" y="60" fill="#ffffff" font-family="Georgia, serif" font-size="15" font-weight="bold">of Prague</text>
+              <text x="24" y="200" fill="#f4a261" font-family="sans-serif" font-size="9">VIKTOR NOVAK</text>
+            </svg>
+          </div>
+          <div class="book-body">
+            <span class="book-genre">Mystery &amp; Thriller</span>
+            <h3 class="book-title">The Cipher of Prague</h3>
+            <p class="book-author">by Viktor Novak</p>
+            <div class="book-rating">&#9733;&#9733;&#9733;&#9733;&#9734; <span>(319 reviews)</span></div>
+            <div class="book-footer">
+              <div class="price-box">
+                <span class="price-current">₹429</span>
+                <span class="price-old">₹550</span>
+              </div>
+              <input type="checkbox" id="bag-8" class="add-bag-check" />
+              <label for="bag-8" class="add-bag-btn">
+                <span class="default-text">+ Add to Bag</span>
+                <span class="added-text">&#10003; In Bag</span>
+              </label>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Special Offers & Bundles Section -->
+  <section id="offers" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Limited Time Promotions</span>
+        <h2 class="section-title">Seasonal Offers &amp; Reader Bundles</h2>
+        <p class="section-subtitle">Save more when you build your personal library with our curated bundles.</p>
+      </div>
+
+      <div class="offers-grid">
+        <div class="offer-card dark">
+          <div>
+            <span class="offer-pill">Festival Offer</span>
+            <h3>Flat 25% Off Orders Above ₹999</h3>
+            <p>Applies across all hardcover and paperback editions in fiction, science, and philosophy.</p>
+            <span class="coupon-code">CODE: READ25</span>
+          </div>
+          <a href="#shop" class="btn btn-light">Apply at Checkout</a>
+        </div>
+
+        <div class="offer-card terracotta">
+          <div>
+            <span class="offer-pill">Bundle Deal</span>
+            <h3>Buy 2 Classics, Get 1 Bookmark &amp; Tote Free</h3>
+            <p>Celebrate timeless literature with our linen-bound collector's series and artisanal reading accessories.</p>
+            <span class="coupon-code">CODE: CLASSIC3</span>
+          </div>
+          <a href="#featured" class="btn btn-light">Shop Classics</a>
+        </div>
+
+        <div class="offer-card cream">
+          <div>
+            <span class="offer-pill">Student Special</span>
+            <h3>Extra 15% Student Reader Discount</h3>
+            <p>Unlock year-round savings on academic references, self-growth titles, and bestselling novels.</p>
+            <span class="coupon-code">CODE: CAMPUS15</span>
+          </div>
+          <a href="#shop" class="btn btn-primary">Claim Student Offer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Authors Section -->
+  <section id="authors" class="section authors-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Meet the Storytellers</span>
+        <h2 class="section-title">Featured Authors</h2>
+        <p class="section-subtitle">Discover the acclaimed voices behind this season's most beloved books.</p>
+      </div>
+
+      <div class="authors-grid">
+        <div class="author-card">
+          <div class="author-avatar">
+            <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="40" fill="#e4ede8" />
+              <circle cx="40" cy="30" r="14" fill="#2e5a44" />
+              <path d="M16 70 C16 52 64 52 64 70" fill="#2e5a44" />
+            </svg>
+          </div>
+          <h3>Clara Vance</h3>
+          <span class="author-role">Literary Fiction Novelist</span>
+          <p class="author-bio">Author of <em>The Glass Observatory</em> and <em>Letters to the Sea</em>. Winner of the Coastal Book Prize.</p>
+          <span class="author-books-count">6 Published Books</span>
+        </div>
+
+        <div class="author-card">
+          <div class="author-avatar">
+            <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="40" fill="#f3e9d2" />
+              <circle cx="40" cy="30" r="14" fill="#c25934" />
+              <path d="M16 70 C16 52 64 52 64 70" fill="#c25934" />
+            </svg>
+          </div>
+          <h3>Elena Rostova</h3>
+          <span class="author-role">Speculative &amp; Sci-Fi Author</span>
+          <p class="author-bio">Former astrophysicist weaving poetic space operas and human-centered futures in <em>Orbital Echoes</em>.</p>
+          <span class="author-books-count">4 Published Books</span>
+        </div>
+
+        <div class="author-card">
+          <div class="author-avatar">
+            <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="40" fill="#e2e8f0" />
+              <circle cx="40" cy="30" r="14" fill="#182238" />
+              <path d="M16 70 C16 52 64 52 64 70" fill="#182238" />
+            </svg>
+          </div>
+          <h3>Dr. Ananya Rao</h3>
+          <span class="author-role">Cognitive Researcher &amp; Author</span>
+          <p class="author-bio">Bestselling author of <em>Deep Focus Habits</em>, helping students and creators master mindful productivity.</p>
+          <span class="author-books-count">3 Published Books</span>
+        </div>
+
+        <div class="author-card">
+          <div class="author-avatar">
+            <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="40" fill="#efe6d5" />
+              <circle cx="40" cy="30" r="14" fill="#8c3b2b" />
+              <path d="M16 70 C16 52 64 52 64 70" fill="#8c3b2b" />
+            </svg>
+          </div>
+          <h3>Arthur Pendleton</h3>
+          <span class="author-role">Historical Mystery Writer</span>
+          <p class="author-bio">Master of atmospheric whodunits set in Victorian estates, including <em>Midnight at Bellweather</em>.</p>
+          <span class="author-books-count">9 Published Books</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shopping Bag & Checkout Section -->
+  <section id="shop" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Ready to Read</span>
+        <h2 class="section-title">Your Shopping Bag &amp; Checkout</h2>
+        <p class="section-subtitle">Review your selected titles, apply your promo code, and complete your order.</p>
+      </div>
+
+      <div class="shop-layout">
+        <!-- Cart Items List -->
+        <div class="cart-panel">
+          <div class="panel-heading">
+            <span>Selected Books (3 Items)</span>
+            <a href="#featured" style="font-family: var(--font-sans); font-size: 0.86rem; color: var(--accent-primary); font-weight: 600;">+ Add More Books</a>
+          </div>
+
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="mini-cover" style="background: linear-gradient(135deg, #23483c, #162e26);"></div>
+              <div>
+                <div class="cart-item-title">Autumn in Kyoto</div>
+                <div class="cart-item-meta">Haruki Sato &bull; Hardcover Edition</div>
+              </div>
+            </div>
+            <div class="cart-item-controls">
+              <label>
+                <span style="font-size: 0.8rem; color: var(--text-secondary);">Qty:</span>
+                <select class="qty-select" aria-label="Quantity for Autumn in Kyoto">
+                  <option value="1" selected>1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </label>
+              <div class="cart-item-price">₹449</div>
+            </div>
+          </div>
+
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="mini-cover" style="background: linear-gradient(135deg, #182238, #5e60ce);"></div>
+              <div>
+                <div class="cart-item-title">Orbital Echoes</div>
+                <div class="cart-item-meta">Elena Rostova &bull; Paperback</div>
+              </div>
+            </div>
+            <div class="cart-item-controls">
+              <label>
+                <span style="font-size: 0.8rem; color: var(--text-secondary);">Qty:</span>
+                <select class="qty-select" aria-label="Quantity for Orbital Echoes">
+                  <option value="1" selected>1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </label>
+              <div class="cart-item-price">₹520</div>
+            </div>
+          </div>
+
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="mini-cover" style="background: linear-gradient(135deg, #f3e9d2, #c25934);"></div>
+              <div>
+                <div class="cart-item-title">The Quiet Architect</div>
+                <div class="cart-item-meta">Julian Mercer &bull; Hardcover Edition</div>
+              </div>
+            </div>
+            <div class="cart-item-controls">
+              <label>
+                <span style="font-size: 0.8rem; color: var(--text-secondary);">Qty:</span>
+                <select class="qty-select" aria-label="Quantity for The Quiet Architect">
+                  <option value="1" selected>1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </label>
+              <div class="cart-item-price">₹399</div>
+            </div>
+          </div>
+
+          <div class="shipping-progress">
+            <span>&#10003; Congratulations! Your order qualifies for FREE Express Delivery &amp; 25% Festival Discount.</span>
+          </div>
+        </div>
+
+        <!-- Order Summary & Express Checkout -->
+        <div class="summary-panel">
+          <div class="panel-heading">
+            <span>Order Summary</span>
+          </div>
+
+          <form class="promo-form" action="#shop">
+            <input type="text" value="READ25" aria-label="Promo code" placeholder="Enter coupon code" />
+            <button type="submit" class="btn btn-outline" style="padding: 0.55rem 1rem; font-size: 0.85rem;">Applied</button>
+          </form>
+
+          <div class="summary-row">
+            <span>Subtotal (3 books)</span>
+            <span>₹1,368</span>
+          </div>
+          <div class="summary-row discount">
+            <span>Festival Promo (READ25 - 25%)</span>
+            <span>- ₹342</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping &amp; Packaging</span>
+            <span style="color: var(--accent-sage); font-weight: 600;">FREE</span>
+          </div>
+          <div class="summary-total">
+            <span>Total Payable</span>
+            <span>₹1,026</span>
+          </div>
+
+          <div class="checkout-fields">
+            <input type="text" placeholder="Full Name (e.g., Aarav Sharma)" required />
+            <input type="email" placeholder="Email Address for Receipt" required />
+            <input type="text" placeholder="Delivery Address &amp; PIN Code" required />
+            <select aria-label="Payment Method">
+              <option>UPI / QR Instant Pay</option>
+              <option>Credit / Debit Card</option>
+              <option>Cash on Delivery</option>
+            </select>
+          </div>
+
+          <!-- Pure CSS Trigger to Open Order Confirmation Modal -->
+          <a href="#order-confirmed" class="btn btn-primary full-width-btn">Place Order &bull; ₹1,026</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pure CSS Order Confirmation Modal (:target) -->
+  <div id="order-confirmed" class="modal-overlay" role="dialog" aria-labelledby="modal-heading">
+    <div class="modal-box">
+      <div class="modal-check">&#10003;</div>
+      <h3 id="modal-heading" style="font-family: var(--font-serif); font-size: 1.6rem; margin-bottom: 0.6rem;">Order Confirmed!</h3>
+      <p style="color: var(--text-secondary); font-size: 0.94rem; margin-bottom: 1.5rem;">
+        Thank you for shopping with <strong>Aurelia Books</strong>. Your curated books are being carefully packed and will arrive within 2–3 business days.
+      </p>
+      <a href="#shop" class="btn btn-primary full-width-btn">Continue Browsing</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#" class="brand" style="color: #ffffff; margin-bottom: 1rem;">
+            <span class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+            </span>
+            Aurelia Books
+          </a>
+          <p>An independent online bookstore dedicated to thoughtful curation, sustainable packaging, and connecting readers with unforgettable stories.</p>
+        </div>
+
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#categories">Book Categories</a></li>
+            <li><a href="#featured">Bestsellers</a></li>
+            <li><a href="#offers">Special Offers</a></li>
+            <li><a href="#authors">Featured Authors</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Reader Support</h4>
+          <ul>
+            <li><a href="#shop">Track Your Order</a></li>
+            <li><a href="#offers">Student Discounts</a></li>
+            <li><a href="#shop">Shipping &amp; Returns</a></li>
+            <li><a href="#shop">Gift Wrapping</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Join Our Book Club</h4>
+          <p>Receive weekly reading recommendations and early access to signed editions.</p>
+          <form class="newsletter-form" action="#order-confirmed">
+            <input type="email" placeholder="Your email address" required />
+            <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1rem;">Join</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 Aurelia Books. Built with pure semantic HTML5 &amp; CSS3.</span>
+        <span>Free Delivery &bull; Eco-Friendly Packaging &bull; 100% Authentic Editions</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
